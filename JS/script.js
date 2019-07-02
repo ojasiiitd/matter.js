@@ -12,34 +12,76 @@ var Engine = Matter.Engine,
 var engine = Engine.create();
 var render = Render.create({
     element: document.body,
-    engine: engine
+    engine: engine,
+    options: {
+      wireframes: false
+    }
 });
 
 var canvas = document.getElementsByTagName("canvas")[0];
 canvas.width = windowWidth;
-canvas.height = windowHeight - 7;
+canvas.height = windowHeight;
 
-var ground = Bodies.rectangle(canvas.width/2 , canvas.height-(60/2) , canvas.width , 60 , { isStatic: true }),
-    leftWall = Bodies.rectangle(15 , canvas.height/2 , 30 , canvas.height , { isStatic: true }) ,
-    rightWall = Bodies.rectangle(canvas.width-30 , canvas.height/2 , 30 , canvas.height , { isStatic: true });
+var wallopts = {
+    render: {
+        fillStyle: "green",
+    },
+    friction: 0,
+    isStatic: true
+};
+
+var ground = Bodies.rectangle(canvas.width/2 , canvas.height+120 , canvas.width , 300 , wallopts),
+    leftWall = Bodies.rectangle(-120 , canvas.height/2 , 300 , canvas.height , wallopts) ,
+    rightWall = Bodies.rectangle(canvas.width+110 , canvas.height/2 , 300 , canvas.height , wallopts);
 World.add(engine.world, [ground , leftWall , rightWall]);
 
+var slide = [];
+slide.push(Bodies.rectangle(300 , 100 , 1500 , 10 , {
+    render: {
+        fillStyle: "green",
+    },
+    isStatic: true,
+    angle: 16*Math.PI/180
+    }));
+slide.push(Bodies.rectangle(1460 , 350 , 900 , 10 , {
+    render: {
+        fillStyle: "green",
+    },
+    isStatic: true,
+    angle: -16*Math.PI/180
+    }));
+slide.push(Bodies.rectangle(300 , 500 , 1500 , 10 , {
+    render: {
+        fillStyle: "green",
+    },
+    isStatic: true,
+    angle: 16*Math.PI/180
+    }));
+World.add(engine.world , slide);
+
 var elements = [];
-canvas.addEventListener("click" , createElements);
+canvas.addEventListener("mousemove" , createElements);
 function createElements()
 {
+    console.log(event);
     var x = event.clientX , y = event.clientY ,
         sides = getRandomInt(3 , 8);
-        radius = getRandomInt(30 , 80);
+        radius = getRandomInt(1 , 10);
         opts = {
+            render: {
+                fillStyle: "slateblue",
+            },
+
             friction: 0,
             restitution: 1,
+            mass: 10,
             force: {
-                x: getRandomFloat(-.7 , .7)
+                x: getRandomFloat(-.7 , .7),
+                y: getRandomFloat(-.7 , .7)
             },
         };
-        add = Bodies.polygon(x , y , sides , radius , opts);
-    console.log(add);
+        add = Bodies.circle(x , y , radius , opts);
+    // console.log(add);
     World.add(engine.world , add);
     elements.push(add);
 }
