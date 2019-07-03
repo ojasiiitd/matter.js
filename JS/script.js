@@ -9,7 +9,9 @@ var Engine = Matter.Engine,
     Render = Matter.Render,
     World = Matter.World,
     Bodies = Matter.Bodies,
-    Constraint = Matter.Constraint;
+    Constraint = Matter.Constraint,
+    Mouse = Matter.Mouse,
+    MouseConstraint = Matter.MouseConstraint;
 var engine = Engine.create();
 var render = Render.create({
     element: document.body,
@@ -35,7 +37,7 @@ var wallopts = {
 var ground = Bodies.rectangle(canvas.width/2 , canvas.height+120 , canvas.width , 300 , wallopts);
     leftWall = Bodies.rectangle(-120 , canvas.height/2 , 300 , canvas.height , wallopts) ,
     rightWall = Bodies.rectangle(canvas.width+110 , canvas.height/2 , 300 , canvas.height , wallopts);
-// World.add(engine.world, [ground , leftWall , rightWall]);
+World.add(engine.world, [ground , leftWall , rightWall]);
 
 var opts = {
     render: {
@@ -51,7 +53,7 @@ var box = Bodies.rectangle(500 , 300 , 60 , 40 , {
     },
     friction: 0,
     restitution: 1,
-    isStatic : true
+    // isStatic : true
 }),
     ball = Bodies.circle(820 , 80 , 40 , opts);
 
@@ -61,11 +63,19 @@ var constraintOptions = {
     bodyA: box,
     bodyB: ball,
     length: 200,
-    stiffness: .01,
+    stiffness: 1,
 };
 
 var spring = Constraint.create(constraintOptions);
 World.add(engine.world , spring);
+
+var mousey = MouseConstraint.create(engine , {
+    render: {
+        lineWidth: 0
+    }
+});
+
+World.add(engine.world , mousey);
 
 // var slide = [];
 // slide.push(Bodies.rectangle(300 , 100 , 1500 , 10 , {
